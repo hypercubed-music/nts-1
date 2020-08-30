@@ -2,7 +2,7 @@
 
 This is a simple 808-style bass patch for the Korg NTS-1
 
-##Parameters:
+## Parameters:
 Shape: Pitch decay time
 Shift-Shape (Alt): Phase distortion
 Drive: drive amount

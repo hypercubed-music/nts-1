@@ -1,0 +1,226 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+SRAM             0x20000000         0x00008000         xr
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD ./build/obj/_unit.o
+LOAD ./build/obj/808-osc.o
+
+.hooks          0x20000000       0x40
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _hooks_start = .
+ *(.hooks)
+ .hooks         0x20000000       0x40 ./build/obj/_unit.o
+                0x20000040                . = ALIGN (0x4)
+                0x20000040                _hooks_end = .
+
+.init_array     0x20000040        0x0
+                0x20000040                . = ALIGN (0x4)
+                0x20000040                PROVIDE (__init_array_start, .)
+ *(SORT(.init_array.*))
+ *(.init_array*)
+                0x20000040                . = ALIGN (0x4)
+                0x20000040                PROVIDE (__init_array_end, .)
+
+.text           0x20000040      0x3b4
+                0x20000040                . = ALIGN (0x4)
+                0x20000040                _text_start = .
+ *(.text)
+ .text          0x20000040       0x60 ./build/obj/_unit.o
+                0x20000042                _hook_mute
+                0x20000044                _hook_value
+                0x2000004e                _entry
+ .text          0x200000a0      0x354 ./build/obj/808-osc.o
+                0x200000a0                _hook_init
+                0x200000bc                _hook_cycle
+                0x20000370                _hook_on
+                0x20000388                _hook_off
+                0x2000038a                _hook_param
+ *(.text.*)
+ *(.glue_7)
+ .glue_7        0x200003f4        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x200003f4        0x0 linker stubs
+ *(.gcc*)
+                0x200003f4                . = ALIGN (0x4)
+                0x200003f4                _text_end = .
+
+.vfp11_veneer   0x200003f4        0x0
+ .vfp11_veneer  0x200003f4        0x0 linker stubs
+
+.v4_bx          0x200003f4        0x0
+ .v4_bx         0x200003f4        0x0 linker stubs
+
+.iplt           0x200003f4        0x0
+ .iplt          0x200003f4        0x0 ./build/obj/_unit.o
+
+.rel.dyn        0x200003f4        0x0
+ .rel.iplt      0x200003f4        0x0 ./build/obj/_unit.o
+
+.rodata         0x200003f4        0x0
+                0x200003f4                . = ALIGN (0x4)
+                0x200003f4                _rodata_start = .
+ *(.rodata)
+ *(.rodata.*)
+                0x200003f4                . = ALIGN (0x4)
+                0x200003f4                _rodata_end = .
+
+.data           0x200003f8        0x0
+                0x200003f8                . = ALIGN (0x8)
+                0x200003f8                _data_start = .
+ *(.data)
+ .data          0x200003f8        0x0 ./build/obj/_unit.o
+ .data          0x200003f8        0x0 ./build/obj/808-osc.o
+ *(.data.*)
+                0x200003f8                . = ALIGN (0x8)
+                0x200003f8                _data_end = .
+
+.igot.plt       0x200003f8        0x0
+ .igot.plt      0x200003f8        0x0 ./build/obj/_unit.o
+
+.bss            0x200003f8       0x30
+                0x200003f8                . = ALIGN (0x4)
+                0x200003f8                _bss_start = .
+ *(.bss)
+ .bss           0x200003f8        0x0 ./build/obj/_unit.o
+ .bss           0x200003f8       0x30 ./build/obj/808-osc.o
+ *(.bss.*)
+ *(COMMON)
+                0x20000428                . = ALIGN (0x4)
+                0x20000428                _bss_end = .
+
+.ARM.extab      0x20000428        0x0
+                0x20000428                . = ALIGN (0x4)
+                0x20000428                __extab_start = .
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x20000428                . = ALIGN (0x4)
+                0x20000428                __extab_end = .
+
+.ARM.exidx      0x20000428        0x0
+                0x20000428                __exidx_start = .
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x20000428                __exidx_end = .
+
+.eh_frame_hdr   0x20000428        0x0
+                0x20000428                . = ALIGN (0x4)
+                0x20000428                _eh_frame_hdr_start = .
+ *(.eh_frame_hdr)
+                0x20000428                . = ALIGN (0x4)
+                0x20000428                _eh_frame_hdr_end = .
+
+.eh_frame       0x20000428        0x0
+                0x20000428                . = ALIGN (0x4)
+                0x20000428                _eh_frame_start = .
+ *(.eh_frame)
+                0x20000428                . = ALIGN (0x4)
+                0x20000428                _eh_frame_end = .
+LOAD ./ld/osc_api.syms
+                0x0800f000                k_osc_api_version = 0x800f000
+                0x0800f004                k_osc_api_platform = 0x800f004
+                0x0800f100                midi_to_hz_lut_f = 0x800f100
+                0x0800f360                sqrtm2log_lut_f = 0x800f360
+                0x0800f764                tanpi_lut_f = 0x800f764
+                0x0800fb68                log_lut_f = 0x800fb68
+                0x0800ff6c                bitres_lut_f = 0x800ff6c
+                0x08010170                wt_par_lut_f = 0x8010170
+                0x08010f8c                wt_par_notes = 0x8010f8c
+                0x08010f94                wt_sqr_lut_f = 0x8010f94
+                0x08011db0                wt_sqr_notes = 0x8011db0
+                0x08011db8                wt_saw_lut_f = 0x8011db8
+                0x08012bd4                wt_saw_notes = 0x8012bd4
+                0x08012bdc                wt_sine_lut_f = 0x8012bdc
+                0x08012de0                schetzen_lut_f = 0x8012de0
+                0x08012fe4                cubicsat_lut_f = 0x8012fe4
+                0x080131e8                wavesA = 0x80131e8
+                0x0801546c                wavesB = 0x801546c
+                0x080174ec                wavesC = 0x80174ec
+                0x0801915c                wavesD = 0x801915c
+                0x0801abc4                wavesE = 0x801abc4
+                0x0801ca3c                wavesF = 0x801ca3c
+                0x0801eabc                _osc_mcu_hash = 0x801eabc
+                0x0801eac8                _osc_bl_saw_idx = 0x801eac8
+                0x0801ebb0                _osc_bl_sqr_idx = 0x801ebb0
+                0x0801ec98                _osc_bl_par_idx = 0x801ec98
+                0x0801ed80                _osc_rand = 0x801ed80
+                0x0801edb8                _osc_white = 0x801edb8
+LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu\libm.a
+START GROUP
+LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu\libgcc.a
+LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu\libg.a
+LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu\libc.a
+END GROUP
+OUTPUT(build/osc_808.elf elf32-littlearm)
+
+.debug_info     0x00000000     0x1330
+ .debug_info    0x00000000      0x6a4 ./build/obj/_unit.o
+ .debug_info    0x000006a4      0xc8c ./build/obj/808-osc.o
+
+.debug_abbrev   0x00000000      0x470
+ .debug_abbrev  0x00000000      0x20e ./build/obj/_unit.o
+ .debug_abbrev  0x0000020e      0x262 ./build/obj/808-osc.o
+
+.debug_loc      0x00000000      0x801
+ .debug_loc     0x00000000       0xb9 ./build/obj/_unit.o
+ .debug_loc     0x000000b9      0x748 ./build/obj/808-osc.o
+
+.debug_aranges  0x00000000       0x40
+ .debug_aranges
+                0x00000000       0x20 ./build/obj/_unit.o
+ .debug_aranges
+                0x00000020       0x20 ./build/obj/808-osc.o
+
+.debug_line     0x00000000      0x5f8
+ .debug_line    0x00000000      0x20d ./build/obj/_unit.o
+ .debug_line    0x0000020d      0x3eb ./build/obj/808-osc.o
+
+.debug_str      0x00000000      0x903
+ .debug_str     0x00000000      0x5b5 ./build/obj/_unit.o
+                                0x63d (size before relaxing)
+ .debug_str     0x000005b5      0x34e ./build/obj/808-osc.o
+                                0x626 (size before relaxing)
+
+.comment        0x00000000       0x6e
+ .comment       0x00000000       0x6e ./build/obj/_unit.o
+                                 0x6f (size before relaxing)
+ .comment       0x0000006e       0x6f ./build/obj/808-osc.o
+
+.ARM.attributes
+                0x00000000       0x39
+ .ARM.attributes
+                0x00000000       0x39 ./build/obj/_unit.o
+ .ARM.attributes
+                0x00000039       0x39 ./build/obj/808-osc.o
+
+.debug_frame    0x00000000      0x140
+ .debug_frame   0x00000000       0xa8 ./build/obj/_unit.o
+ .debug_frame   0x000000a8       0x98 ./build/obj/808-osc.o
+
+.debug_ranges   0x00000000      0x228
+ .debug_ranges  0x00000000      0x228 ./build/obj/808-osc.o
+
+Cross Reference Table
+
+Symbol                                            File
+__init_array_end                                  ./build/obj/_unit.o
+__init_array_start                                ./build/obj/_unit.o
+_bss_end                                          ./build/obj/_unit.o
+_bss_start                                        ./build/obj/_unit.o
+_entry                                            ./build/obj/_unit.o
+_hook_cycle                                       ./build/obj/808-osc.o
+                                                  ./build/obj/_unit.o
+_hook_init                                        ./build/obj/808-osc.o
+                                                  ./build/obj/_unit.o
+_hook_mute                                        ./build/obj/_unit.o
+_hook_off                                         ./build/obj/808-osc.o
+                                                  ./build/obj/_unit.o
+_hook_on                                          ./build/obj/808-osc.o
+                                                  ./build/obj/_unit.o
+_hook_param                                       ./build/obj/808-osc.o
+                                                  ./build/obj/_unit.o
+_hook_value                                       ./build/obj/_unit.o
+midi_to_hz_lut_f                                  ./build/obj/808-osc.o
+wt_sine_lut_f                                     ./build/obj/808-osc.o

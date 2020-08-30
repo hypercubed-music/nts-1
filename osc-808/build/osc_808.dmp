@@ -1,0 +1,134 @@
+
+build/osc_808.elf:     file format elf32-littlearm
+build/osc_808.elf
+architecture: arm, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0x2000004f
+
+Program Header:
+    LOAD off    0x00010000 vaddr 0x20000000 paddr 0x20000000 align 2**16
+         filesz 0x000003f8 memsz 0x00000428 flags rwx
+private flags = 5000400: [Version5 EABI] [hard-float ABI]
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .hooks        00000040  20000000  20000000  00010000  2**4
+                  CONTENTS, ALLOC, LOAD, READONLY, DATA
+  1 .init_array   00000000  20000040  200003f8  000103f8  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .text         000003b4  20000040  20000040  00010040  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  3 .rodata       00000000  200003f4  200003f8  000103f8  2**2
+                  CONTENTS, ALLOC, LOAD, DATA
+  4 .data         00000000  200003f8  200003f8  000103f8  2**3
+                  CONTENTS, ALLOC, LOAD, DATA
+  5 .bss          00000030  200003f8  200003f8  000103f8  2**2
+                  ALLOC
+  6 .ARM.extab    00000000  20000428  20000428  000103f8  2**2
+                  CONTENTS
+  7 .eh_frame_hdr 00000000  20000428  20000428  000103f8  2**2
+                  CONTENTS
+  8 .eh_frame     00000000  20000428  20000428  000103f8  2**2
+                  CONTENTS
+  9 .debug_info   00001330  00000000  00000000  000103f8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_abbrev 00000470  00000000  00000000  00011728  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    00000801  00000000  00000000  00011b98  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_aranges 00000040  00000000  00000000  00012399  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_line   000005f8  00000000  00000000  000123d9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .debug_str    00000903  00000000  00000000  000129d1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 15 .comment      0000006e  00000000  00000000  000132d4  2**0
+                  CONTENTS, READONLY
+ 16 .ARM.attributes 00000039  00000000  00000000  00013342  2**0
+                  CONTENTS, READONLY
+ 17 .debug_frame  00000140  00000000  00000000  0001337c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 18 .debug_ranges 00000228  00000000  00000000  000134bc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+SYMBOL TABLE:
+20000000 l    d  .hooks	00000000 .hooks
+20000040 l    d  .init_array	00000000 .init_array
+20000040 l    d  .text	00000000 .text
+200003f4 l    d  .rodata	00000000 .rodata
+200003f8 l    d  .data	00000000 .data
+200003f8 l    d  .bss	00000000 .bss
+20000428 l    d  .ARM.extab	00000000 .ARM.extab
+20000428 l    d  .eh_frame_hdr	00000000 .eh_frame_hdr
+20000428 l    d  .eh_frame	00000000 .eh_frame
+00000000 l    d  .debug_info	00000000 .debug_info
+00000000 l    d  .debug_abbrev	00000000 .debug_abbrev
+00000000 l    d  .debug_loc	00000000 .debug_loc
+00000000 l    d  .debug_aranges	00000000 .debug_aranges
+00000000 l    d  .debug_line	00000000 .debug_line
+00000000 l    d  .debug_str	00000000 .debug_str
+00000000 l    d  .comment	00000000 .comment
+00000000 l    d  .ARM.attributes	00000000 .ARM.attributes
+00000000 l    d  .debug_frame	00000000 .debug_frame
+00000000 l    d  .debug_ranges	00000000 .debug_ranges
+00000000 l    df *ABS*	00000000 _unit.c
+20000000 l     O .hooks	00000040 s_hook_table
+00000000 l    df *ABS*	00000000 808-osc.cpp
+200003f8 l     O .bss	00000030 _ZL7s_state
+0801ed80 g       *ABS*	00000000 _osc_rand
+0800ff6c g       *ABS*	00000000 bitres_lut_f
+0801eabc g       *ABS*	00000000 _osc_mcu_hash
+20000428 g       .eh_frame_hdr	00000000 _eh_frame_hdr_start
+200003f4 g       .text	00000000 _text_end
+20000428 g       .eh_frame_hdr	00000000 __exidx_end
+2000038a g     F .text	0000006a _hook_param
+0801ca3c g       *ABS*	00000000 wavesF
+200003f4 g       .rodata	00000000 _rodata_end
+080174ec g       *ABS*	00000000 wavesC
+20000040 g       .hooks	00000000 _hooks_end
+20000428 g       .eh_frame	00000000 _eh_frame_start
+200003f8 g       .bss	00000000 _bss_start
+20000040 g       .text	00000000 _text_start
+20000044  w    F .text	00000002 _hook_value
+200000a0 g     F .text	0000001c _hook_init
+20000428 g       .eh_frame_hdr	00000000 __exidx_start
+0801ec98 g       *ABS*	00000000 _osc_bl_par_idx
+0800f764 g       *ABS*	00000000 tanpi_lut_f
+20000428 g       .bss	00000000 _bss_end
+0800f360 g       *ABS*	00000000 sqrtm2log_lut_f
+20000428 g       .eh_frame_hdr	00000000 _eh_frame_hdr_end
+08011db8 g       *ABS*	00000000 wt_saw_lut_f
+0800f000 g       *ABS*	00000000 k_osc_api_version
+08012de0 g       *ABS*	00000000 schetzen_lut_f
+200003f8 g       .data	00000000 _data_start
+08012fe4 g       *ABS*	00000000 cubicsat_lut_f
+0801abc4 g       *ABS*	00000000 wavesE
+200003f8 g       .data	00000000 _data_end
+0801ebb0 g       *ABS*	00000000 _osc_bl_sqr_idx
+2000004e g     F .text	00000052 _entry
+08010f8c g       *ABS*	00000000 wt_par_notes
+20000000 g       .hooks	00000000 _hooks_start
+0801edb8 g       *ABS*	00000000 _osc_white
+20000040 g       .init_array	00000000 __init_array_end
+20000428 g       .eh_frame	00000000 _eh_frame_end
+080131e8 g       *ABS*	00000000 wavesA
+20000388 g     F .text	00000002 _hook_off
+08011db0 g       *ABS*	00000000 wt_sqr_notes
+200000bc g     F .text	000002b4 _hook_cycle
+20000042  w    F .text	00000002 _hook_mute
+0800fb68 g       *ABS*	00000000 log_lut_f
+08012bdc g       *ABS*	00000000 wt_sine_lut_f
+08012bd4 g       *ABS*	00000000 wt_saw_notes
+200003f4 g       .rodata	00000000 _rodata_start
+0801546c g       *ABS*	00000000 wavesB
+0801915c g       *ABS*	00000000 wavesD
+20000428 g       .ARM.extab	00000000 __extab_start
+20000040 g       .init_array	00000000 __init_array_start
+08010f94 g       *ABS*	00000000 wt_sqr_lut_f
+0800f100 g       *ABS*	00000000 midi_to_hz_lut_f
+20000428 g       .ARM.extab	00000000 __extab_end
+0801eac8 g       *ABS*	00000000 _osc_bl_saw_idx
+08010170 g       *ABS*	00000000 wt_par_lut_f
+0800f004 g       *ABS*	00000000 k_osc_api_platform
+20000370 g     F .text	00000018 _hook_on
+
+

@@ -1,0 +1,740 @@
+
+build/osc_808.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+20000040 <_text_start>:
+  (void)api;
+}
+
+__attribute__((weak))
+void _hook_cycle(const user_osc_param_t * const params, int32_t *yn, const uint32_t frames)
+{
+20000040:	4770      	bx	lr
+
+20000042 <_hook_mute>:
+  (void)params;
+}
+
+__attribute__((weak))
+void _hook_mute(const user_osc_param_t * const params)
+{
+20000042:	4770      	bx	lr
+
+20000044 <_hook_value>:
+  (void)params;
+}
+
+__attribute__((weak))
+void _hook_value(uint16_t value)
+{
+20000044:	4770      	bx	lr
+  (void)value;
+}
+
+__attribute__((weak))
+void _hook_param(uint16_t index, uint16_t value)
+{
+20000046:	4770      	bx	lr
+20000048:	4770      	bx	lr
+2000004a:	4770      	bx	lr
+  _hook_init(platform, api);
+}
+
+__attribute__((weak))
+void _hook_init(uint32_t platform, uint32_t api)
+{
+2000004c:	4770      	bx	lr
+
+2000004e <_entry>:
+ * @{
+ */
+
+__attribute__((used))
+void _entry(uint32_t platform, uint32_t api)
+{
+2000004e:	4b10      	ldr	r3, [pc, #64]	; (20000090 <_entry+0x42>)
+20000050:	4a10      	ldr	r2, [pc, #64]	; (20000094 <_entry+0x46>)
+20000052:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
+20000056:	4688      	mov	r8, r1
+20000058:	4607      	mov	r7, r0
+  // Ensure zero-clear BSS segment
+  uint8_t * __restrict bss_p = (uint8_t *)&_bss_start;
+  const uint8_t * const bss_e = (uint8_t *)&_bss_end;
+
+  for (; bss_p != bss_e;)
+    *(bss_p++) = 0;
+2000005a:	2100      	movs	r1, #0
+{
+  // Ensure zero-clear BSS segment
+  uint8_t * __restrict bss_p = (uint8_t *)&_bss_start;
+  const uint8_t * const bss_e = (uint8_t *)&_bss_end;
+
+  for (; bss_p != bss_e;)
+2000005c:	4293      	cmp	r3, r2
+2000005e:	d002      	beq.n	20000066 <_entry+0x18>
+    *(bss_p++) = 0;
+20000060:	f803 1f01 	strb.w	r1, [r3, #1]!
+20000064:	e7fa      	b.n	2000005c <_entry+0xe>
+20000066:	4b0c      	ldr	r3, [pc, #48]	; (20000098 <_entry+0x4a>)
+20000068:	4c0c      	ldr	r4, [pc, #48]	; (2000009c <_entry+0x4e>)
+2000006a:	1ae4      	subs	r4, r4, r3
+2000006c:	10a4      	asrs	r4, r4, #2
+
+  // Call constructors if any.  
+  const size_t count = __init_array_end - __init_array_start;
+  for (size_t i = 0; i<count; ++i) {
+2000006e:	2500      	movs	r5, #0
+20000070:	461e      	mov	r6, r3
+20000072:	42a5      	cmp	r5, r4
+20000074:	d005      	beq.n	20000082 <_entry+0x34>
+    __init_fptr init_p = (__init_fptr)__init_array_start[i];
+20000076:	f856 3025 	ldr.w	r3, [r6, r5, lsl #2]
+    if (init_p != NULL)
+2000007a:	b103      	cbz	r3, 2000007e <_entry+0x30>
+      init_p();
+2000007c:	4798      	blx	r3
+  for (; bss_p != bss_e;)
+    *(bss_p++) = 0;
+
+  // Call constructors if any.  
+  const size_t count = __init_array_end - __init_array_start;
+  for (size_t i = 0; i<count; ++i) {
+2000007e:	3501      	adds	r5, #1
+20000080:	e7f7      	b.n	20000072 <_entry+0x24>
+    if (init_p != NULL)
+      init_p();
+  }
+  
+  // Call user initialization
+  _hook_init(platform, api);
+20000082:	4641      	mov	r1, r8
+20000084:	4638      	mov	r0, r7
+20000086:	f000 f80b 	bl	200000a0 <_hook_init>
+2000008a:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
+2000008e:	bf00      	nop
+20000090:	200003f7 	.word	0x200003f7
+20000094:	20000427 	.word	0x20000427
+20000098:	20000040 	.word	0x20000040
+2000009c:	20000040 	.word	0x20000040
+
+200000a0 <_hook_init>:
+};
+
+void OSC_INIT(uint32_t platform, uint32_t api) {
+    (void)platform;
+    (void)api;
+    s_state.w_target = 0.f; //target phase delta
+200000a0:	4b05      	ldr	r3, [pc, #20]	; (200000b8 <_hook_init+0x18>)
+200000a2:	2200      	movs	r2, #0
+200000a4:	605a      	str	r2, [r3, #4]
+    s_state.w_init   = 0.f;
+200000a6:	609a      	str	r2, [r3, #8]
+    s_state.w0       = 0.f; //phase delta
+200000a8:	601a      	str	r2, [r3, #0]
+    s_state.phase    = 0.f; //phase
+200000aa:	615a      	str	r2, [r3, #20]
+    s_state.pitch_decay = 0.f; //pitch decay time
+200000ac:	60da      	str	r2, [r3, #12]
+    s_state.hold_time = 0.f;
+200000ae:	611a      	str	r2, [r3, #16]
+    s_state.dist     = 0.f;
+200000b0:	619a      	str	r2, [r3, #24]
+    s_state.drive    = 0.f;
+200000b2:	61da      	str	r2, [r3, #28]
+    s_state.attack_pitch = 0.f;
+200000b4:	621a      	str	r2, [r3, #32]
+200000b6:	4770      	bx	lr
+200000b8:	200003f8 	.word	0x200003f8
+
+200000bc <_hook_cycle>:
+// params: oscillator parameter
+// yn: write address
+// frames: requested frame count for write
+void OSC_CYCLE(const user_osc_param_t * const params,
+               int32_t *yn,
+               const uint32_t frames) {
+200000bc:	b5f0      	push	{r4, r5, r6, r7, lr}
+200000be:	ed2d 8b04 	vpush	{d8-d9}
+
+    // Store current flag then reset
+    const uint8_t flags = s_state.flags;
+200000c2:	4ba1      	ldr	r3, [pc, #644]	; (20000348 <_hook_cycle+0x28c>)
+   *
+   * @param note Note in [0-151] range.
+   * @return     Corresponding Hertz value.
+   */
+  __fast_inline float osc_notehzf(uint8_t note) {
+    return midi_to_hz_lut_f[clipmaxu32(note,k_midi_to_hz_size-1)];
+200000c4:	4ea1      	ldr	r6, [pc, #644]	; (2000034c <_hook_cycle+0x290>)
+200000c6:	f893 702c 	ldrb.w	r7, [r3, #44]	; 0x2c
+   */
+  __fast_inline float osc_w0f_for_note(uint8_t note, uint8_t mod) {    
+    const float f0 = osc_notehzf(note);
+    const float f1 = osc_notehzf(note+1);
+    
+    const float f = clipmaxf(linintf(mod * k_note_mod_fscale, f0, f1), k_note_max_hz);
+200000ca:	ed9f 7aa1 	vldr	s14, [pc, #644]	; 20000350 <_hook_cycle+0x294>
+    s_state.flags = k_flags_none;
+
+    const float attack_pitch = s_state.attack_pitch;
+    // Get the target phase delta (where we want to end up)
+    const float w_target = s_state.w_target = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) / 2.f;
+200000ce:	ed9f 4aa1 	vldr	s8, [pc, #644]	; 20000354 <_hook_cycle+0x298>
+
+    // Store current flag then reset
+    const uint8_t flags = s_state.flags;
+    s_state.flags = k_flags_none;
+
+    const float attack_pitch = s_state.attack_pitch;
+200000d2:	ed93 5a08 	vldr	s10, [r3, #32]
+    // Get the target phase delta (where we want to end up)
+    const float w_target = s_state.w_target = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) / 2.f;
+    const float w_init = s_state.w_init = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) * attack_pitch;
+    const float pitch_decay = s_state.pitch_decay;
+200000d6:	ed93 2a03 	vldr	s4, [r3, #12]
+
+    const float w0 = s_state.w0 = linintf(hold_time,w_init,w_target);
+    float phase = (flags & k_flag_reset) ? 0.f : s_state.phase;
+
+    // phase distortion
+    const float dist  = s_state.dist;
+200000da:	edd3 3a06 	vldr	s7, [r3, #24]
+    const float drive = s_state.drive;
+200000de:	edd3 0a07 	vldr	s1, [r3, #28]
+               int32_t *yn,
+               const uint32_t frames) {
+
+    // Store current flag then reset
+    const uint8_t flags = s_state.flags;
+    s_state.flags = k_flags_none;
+200000e2:	2400      	movs	r4, #0
+200000e4:	f883 402c 	strb.w	r4, [r3, #44]	; 0x2c
+
+    const float attack_pitch = s_state.attack_pitch;
+    // Get the target phase delta (where we want to end up)
+    const float w_target = s_state.w_target = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) / 2.f;
+200000e8:	8884      	ldrh	r4, [r0, #4]
+200000ea:	1225      	asrs	r5, r4, #8
+
+/** Clip upper bound of unsigned integer x to m (inclusive)
+ */
+static inline __attribute__((optimize("Ofast"), always_inline))
+uint32_t clipmaxu32(const uint32_t x, const uint32_t m) {
+  return (((x)>=m)?m:(x));
+200000ec:	2d96      	cmp	r5, #150	; 0x96
+200000ee:	b2e4      	uxtb	r4, r4
+200000f0:	ee06 4a90 	vmov	s13, r4
+200000f4:	bfd4      	ite	le
+200000f6:	462c      	movle	r4, r5
+200000f8:	2497      	movgt	r4, #151	; 0x97
+   *
+   * @param note Note in [0-151] range.
+   * @return     Corresponding Hertz value.
+   */
+  __fast_inline float osc_notehzf(uint8_t note) {
+    return midi_to_hz_lut_f[clipmaxu32(note,k_midi_to_hz_size-1)];
+200000fa:	eb06 0484 	add.w	r4, r6, r4, lsl #2
+200000fe:	edd4 7a00 	vldr	s15, [r4]
+   * @param note Note in [0-151] range, mod in [0-255] range.
+   * @return     Corresponding 0-1 phase increment in floating point.
+   */
+  __fast_inline float osc_w0f_for_note(uint8_t note, uint8_t mod) {    
+    const float f0 = osc_notehzf(note);
+    const float f1 = osc_notehzf(note+1);
+20000102:	1c6c      	adds	r4, r5, #1
+20000104:	b2e4      	uxtb	r4, r4
+20000106:	2c96      	cmp	r4, #150	; 0x96
+20000108:	bf94      	ite	ls
+2000010a:	46a6      	movls	lr, r4
+2000010c:	f04f 0e97 	movhi.w	lr, #151	; 0x97
+   *
+   * @param note Note in [0-151] range.
+   * @return     Corresponding Hertz value.
+   */
+  __fast_inline float osc_notehzf(uint8_t note) {
+    return midi_to_hz_lut_f[clipmaxu32(note,k_midi_to_hz_size-1)];
+20000110:	eb06 0e8e 	add.w	lr, r6, lr, lsl #2
+   */
+  __fast_inline float osc_w0f_for_note(uint8_t note, uint8_t mod) {    
+    const float f0 = osc_notehzf(note);
+    const float f1 = osc_notehzf(note+1);
+    
+    const float f = clipmaxf(linintf(mod * k_note_mod_fscale, f0, f1), k_note_max_hz);
+20000114:	eef8 6ae6 	vcvt.f32.s32	s13, s13
+
+/** Linear interpolation
+ */
+static inline __attribute__((optimize("Ofast"), always_inline))
+float linintf(const float fr, const float x0, const float x1) {
+  return x0 + fr * (x1 - x0);
+20000118:	ed9e 6a00 	vldr	s12, [lr]
+2000011c:	ee66 6a87 	vmul.f32	s13, s13, s14
+20000120:	ee36 6a67 	vsub.f32	s12, s12, s15
+
+/** FSEL construct
+ */
+static inline __attribute__((optimize("Ofast"),always_inline))
+float fsel(const float a, const float b, const float c) {
+  return (a >= 0) ? b : c;
+20000124:	ed9f 7a8c 	vldr	s14, [pc, #560]	; 20000358 <_hook_cycle+0x29c>
+
+/** Linear interpolation
+ */
+static inline __attribute__((optimize("Ofast"), always_inline))
+float linintf(const float fr, const float x0, const float x1) {
+  return x0 + fr * (x1 - x0);
+20000128:	eee6 7a86 	vfma.f32	s15, s13, s12
+2000012c:	eeb6 6a00 	vmov.f32	s12, #96	; 0x3f000000  0.5
+
+/** FSEL construct
+ */
+static inline __attribute__((optimize("Ofast"),always_inline))
+float fsel(const float a, const float b, const float c) {
+  return (a >= 0) ? b : c;
+20000130:	eef4 7ac7 	vcmpe.f32	s15, s14
+20000134:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20000138:	bfa8      	it	ge
+2000013a:	eef0 7a47 	vmovge.f32	s15, s14
+2000013e:	2d97      	cmp	r5, #151	; 0x97
+20000140:	bfa8      	it	ge
+20000142:	2597      	movge	r5, #151	; 0x97
+20000144:	2c97      	cmp	r4, #151	; 0x97
+20000146:	bf28      	it	cs
+20000148:	2497      	movcs	r4, #151	; 0x97
+2000014a:	ee67 7a84 	vmul.f32	s15, s15, s8
+   *
+   * @param note Note in [0-151] range.
+   * @return     Corresponding Hertz value.
+   */
+  __fast_inline float osc_notehzf(uint8_t note) {
+    return midi_to_hz_lut_f[clipmaxu32(note,k_midi_to_hz_size-1)];
+2000014e:	eb06 0585 	add.w	r5, r6, r5, lsl #2
+20000152:	eb06 0484 	add.w	r4, r6, r4, lsl #2
+20000156:	ee67 7a86 	vmul.f32	s15, s15, s12
+
+/** Linear interpolation
+ */
+static inline __attribute__((optimize("Ofast"), always_inline))
+float linintf(const float fr, const float x0, const float x1) {
+  return x0 + fr * (x1 - x0);
+2000015a:	edd4 5a00 	vldr	s11, [r4]
+2000015e:	ed95 6a00 	vldr	s12, [r5]
+20000162:	edc3 7a01 	vstr	s15, [r3, #4]
+20000166:	ee75 5ac6 	vsub.f32	s11, s11, s12
+2000016a:	eea5 6aa6 	vfma.f32	s12, s11, s13
+    const float w_init = s_state.w_init = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) * attack_pitch;
+    const float pitch_decay = s_state.pitch_decay;
+    float hold_time = s_state.hold_time;
+2000016e:	edd3 5a04 	vldr	s11, [r3, #16]
+
+/** FSEL construct
+ */
+static inline __attribute__((optimize("Ofast"),always_inline))
+float fsel(const float a, const float b, const float c) {
+  return (a >= 0) ? b : c;
+20000172:	eeb4 6ac7 	vcmpe.f32	s12, s14
+20000176:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+2000017a:	bfb8      	it	lt
+2000017c:	eeb0 7a46 	vmovlt.f32	s14, s12
+    s_state.flags = k_flags_none;
+
+    const float attack_pitch = s_state.attack_pitch;
+    // Get the target phase delta (where we want to end up)
+    const float w_target = s_state.w_target = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) / 2.f;
+    const float w_init = s_state.w_init = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) * attack_pitch;
+20000180:	ee27 7a04 	vmul.f32	s14, s14, s8
+    const float pitch_decay = s_state.pitch_decay;
+    float hold_time = s_state.hold_time;
+
+    const float w0 = s_state.w0 = linintf(hold_time,w_init,w_target);
+    float phase = (flags & k_flag_reset) ? 0.f : s_state.phase;
+20000184:	f017 0701 	ands.w	r7, r7, #1
+    s_state.flags = k_flags_none;
+
+    const float attack_pitch = s_state.attack_pitch;
+    // Get the target phase delta (where we want to end up)
+    const float w_target = s_state.w_target = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) / 2.f;
+    const float w_init = s_state.w_init = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) * attack_pitch;
+20000188:	ee27 7a05 	vmul.f32	s14, s14, s10
+    const float pitch_decay = s_state.pitch_decay;
+    float hold_time = s_state.hold_time;
+
+    const float w0 = s_state.w0 = linintf(hold_time,w_init,w_target);
+    float phase = (flags & k_flag_reset) ? 0.f : s_state.phase;
+2000018c:	bf08      	it	eq
+2000018e:	ed93 6a05 	vldreq	s12, [r3, #20]
+    s_state.flags = k_flags_none;
+
+    const float attack_pitch = s_state.attack_pitch;
+    // Get the target phase delta (where we want to end up)
+    const float w_target = s_state.w_target = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) / 2.f;
+    const float w_init = s_state.w_init = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) * attack_pitch;
+20000192:	ed83 7a02 	vstr	s14, [r3, #8]
+
+/** Linear interpolation
+ */
+static inline __attribute__((optimize("Ofast"), always_inline))
+float linintf(const float fr, const float x0, const float x1) {
+  return x0 + fr * (x1 - x0);
+20000196:	ee77 7ac7 	vsub.f32	s15, s15, s14
+    const float pitch_decay = s_state.pitch_decay;
+    float hold_time = s_state.hold_time;
+
+    const float w0 = s_state.w0 = linintf(hold_time,w_init,w_target);
+    float phase = (flags & k_flag_reset) ? 0.f : s_state.phase;
+2000019a:	bf18      	it	ne
+2000019c:	ed9f 6a6f 	vldrne	s12, [pc, #444]	; 2000035c <_hook_cycle+0x2a0>
+200001a0:	eea5 7aa7 	vfma.f32	s14, s11, s15
+    // phase distortion
+    const float dist  = s_state.dist;
+    const float drive = s_state.drive;
+
+    // lfo stuf
+    const float lfo = s_state.lfo = q31_to_f32(params->shape_lfo);
+200001a4:	edd0 7a00 	vldr	s15, [r0]
+    const float w_target = s_state.w_target = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) / 2.f;
+    const float w_init = s_state.w_init = osc_w0f_for_note((params->pitch)>>8, params->pitch & 0xFF) * attack_pitch;
+    const float pitch_decay = s_state.pitch_decay;
+    float hold_time = s_state.hold_time;
+
+    const float w0 = s_state.w0 = linintf(hold_time,w_init,w_target);
+200001a8:	ed83 7a00 	vstr	s14, [r3]
+    // phase distortion
+    const float dist  = s_state.dist;
+    const float drive = s_state.drive;
+
+    // lfo stuf
+    const float lfo = s_state.lfo = q31_to_f32(params->shape_lfo);
+200001ac:	eefa 7ae0 	vcvt.f32.s32	s15, s15, #31
+200001b0:	eef0 6a47 	vmov.f32	s13, s14
+200001b4:	edc3 7a09 	vstr	s15, [r3, #36]	; 0x24
+    float lfoz = (flags & k_flag_reset) ? lfo : s_state.lfoz;
+200001b8:	b91f      	cbnz	r7, 200001c2 <_hook_cycle+0x106>
+200001ba:	4863      	ldr	r0, [pc, #396]	; (20000348 <_hook_cycle+0x28c>)
+200001bc:	ed90 5a0a 	vldr	s10, [r0, #40]	; 0x28
+200001c0:	e001      	b.n	200001c6 <_hook_cycle+0x10a>
+200001c2:	eeb0 5a67 	vmov.f32	s10, s15
+    const float lfo_inc = (lfo - lfoz) / frames;
+200001c6:	ee07 2a10 	vmov	s14, r2
+200001ca:	ee77 7ac5 	vsub.f32	s15, s15, s10
+200001ce:	eeb8 7a47 	vcvt.f32.u32	s14, s14
+   */
+  __fast_inline float osc_sinf(float x) {
+    const float p = x - (uint32_t)x;
+    
+    // half period stored -- wrap around and invert
+    const float x0f = 2.f * p * k_wt_sine_size;
+200001d2:	ed9f 3a63 	vldr	s6, [pc, #396]	; 20000360 <_hook_cycle+0x2a4>
+    const uint32_t x0p = (uint32_t)x0f;
+
+    const uint32_t x0 = x0p & k_wt_sine_mask;
+    const uint32_t x1 = (x0 + 1) & k_wt_sine_mask;
+    
+    const float y0 = linintf(x0f - x0p, wt_sine_lut_f[x0], wt_sine_lut_f[x1]);
+200001d6:	4c63      	ldr	r4, [pc, #396]	; (20000364 <_hook_cycle+0x2a8>)
+    q31_t * __restrict y = (q31_t *)yn; // pointer to current buffer position
+    const q31_t * y_e = y + frames; // pointer to end of buffer
+    for (; y != y_e; ) { // Time to fill the buffer!
+
+        // Phase distortion
+        float p = phase + linintf(dist, 0.f, dist * osc_sinf(phase));
+200001d8:	ed9f 8a60 	vldr	s16, [pc, #384]	; 2000035c <_hook_cycle+0x2a0>
+        p = (p <= 0) ? 1.f - p : p - (uint32_t)p;
+
+        const float sig = osc_softclipf(0.05f,drive * osc_sinf(p));
+        *(y++) = f32_to_q31(sig);
+200001dc:	ed9f 1a62 	vldr	s2, [pc, #392]	; 20000368 <_hook_cycle+0x2ac>
+200001e0:	eddf 1a62 	vldr	s3, [pc, #392]	; 2000036c <_hook_cycle+0x2b0>
+    const float drive = s_state.drive;
+
+    // lfo stuf
+    const float lfo = s_state.lfo = q31_to_f32(params->shape_lfo);
+    float lfoz = (flags & k_flag_reset) ? lfo : s_state.lfoz;
+    const float lfo_inc = (lfo - lfoz) / frames;
+200001e4:	eec7 2a87 	vdiv.f32	s5, s15, s14
+
+    q31_t * __restrict y = (q31_t *)yn; // pointer to current buffer position
+    const q31_t * y_e = y + frames; // pointer to end of buffer
+200001e8:	eb01 0282 	add.w	r2, r1, r2, lsl #2
+200001ec:	4625      	mov	r5, r4
+200001ee:	eeb0 0a43 	vmov.f32	s0, s6
+200001f2:	eef7 4a00 	vmov.f32	s9, #112	; 0x3f800000  1.0
+
+/** FSEL construct
+ */
+static inline __attribute__((optimize("Ofast"),always_inline))
+float fsel(const float a, const float b, const float c) {
+  return (a >= 0) ? b : c;
+200001f6:	eeff 8a00 	vmov.f32	s17, #240	; 0xbf800000 -1.0
+    for (; y != y_e; ) { // Time to fill the buffer!
+200001fa:	4291      	cmp	r1, r2
+200001fc:	f000 809a 	beq.w	20000334 <_hook_cycle+0x278>
+   */
+  __fast_inline float osc_sinf(float x) {
+    const float p = x - (uint32_t)x;
+    
+    // half period stored -- wrap around and invert
+    const float x0f = 2.f * p * k_wt_sine_size;
+20000200:	eefc 7ac6 	vcvt.u32.f32	s15, s12
+20000204:	eef8 7a67 	vcvt.f32.u32	s15, s15
+20000208:	ee76 7a67 	vsub.f32	s15, s12, s15
+2000020c:	ee67 7a83 	vmul.f32	s15, s15, s6
+    const uint32_t x0p = (uint32_t)x0f;
+20000210:	eebc 7ae7 	vcvt.u32.f32	s14, s15
+20000214:	ee17 6a10 	vmov	r6, s14
+
+    const uint32_t x0 = x0p & k_wt_sine_mask;
+20000218:	f006 007f 	and.w	r0, r6, #127	; 0x7f
+
+/** Linear interpolation
+ */
+static inline __attribute__((optimize("Ofast"), always_inline))
+float linintf(const float fr, const float x0, const float x1) {
+  return x0 + fr * (x1 - x0);
+2000021c:	ee09 6a10 	vmov	s18, r6
+    const uint32_t x1 = (x0 + 1) & k_wt_sine_mask;
+    
+    const float y0 = linintf(x0f - x0p, wt_sine_lut_f[x0], wt_sine_lut_f[x1]);
+20000220:	eb04 0780 	add.w	r7, r4, r0, lsl #2
+20000224:	3001      	adds	r0, #1
+20000226:	eeb8 9a49 	vcvt.f32.u32	s18, s18
+2000022a:	f000 007f 	and.w	r0, r0, #127	; 0x7f
+2000022e:	eb04 0080 	add.w	r0, r4, r0, lsl #2
+20000232:	ed97 7a00 	vldr	s14, [r7]
+20000236:	ee77 7ac9 	vsub.f32	s15, s15, s18
+2000023a:	ed90 9a00 	vldr	s18, [r0]
+2000023e:	ee39 9a47 	vsub.f32	s18, s18, s14
+    return (x0p < k_wt_sine_size)?y0:-y0;
+20000242:	2e7f      	cmp	r6, #127	; 0x7f
+20000244:	eea7 7a89 	vfma.f32	s14, s15, s18
+20000248:	eef0 7a47 	vmov.f32	s15, s14
+2000024c:	bf88      	it	hi
+2000024e:	eef1 7a47 	vneghi.f32	s15, s14
+
+        // Phase distortion
+        float p = phase + linintf(dist, 0.f, dist * osc_sinf(phase));
+20000252:	ee63 7aa7 	vmul.f32	s15, s7, s15
+20000256:	eeb0 7a48 	vmov.f32	s14, s16
+2000025a:	eea3 7aa7 	vfma.f32	s14, s7, s15
+2000025e:	ee77 7a06 	vadd.f32	s15, s14, s12
+        p = (p <= 0) ? 1.f - p : p - (uint32_t)p;
+20000262:	eef5 7ac0 	vcmpe.f32	s15, #0.0
+20000266:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+2000026a:	bf89      	itett	hi
+2000026c:	eebc 7ae7 	vcvthi.u32.f32	s14, s15
+20000270:	ee74 7ae7 	vsubls.f32	s15, s9, s15
+20000274:	eeb8 7a47 	vcvthi.f32.u32	s14, s14
+20000278:	ee77 7ac7 	vsubhi.f32	s15, s15, s14
+   */
+  __fast_inline float osc_sinf(float x) {
+    const float p = x - (uint32_t)x;
+    
+    // half period stored -- wrap around and invert
+    const float x0f = 2.f * p * k_wt_sine_size;
+2000027c:	eebc 7ae7 	vcvt.u32.f32	s14, s15
+20000280:	eeb8 7a47 	vcvt.f32.u32	s14, s14
+20000284:	ee77 7ac7 	vsub.f32	s15, s15, s14
+20000288:	ee27 7a80 	vmul.f32	s14, s15, s0
+    const uint32_t x0p = (uint32_t)x0f;
+2000028c:	eefc 7ac7 	vcvt.u32.f32	s15, s14
+20000290:	ee17 6a90 	vmov	r6, s15
+
+    const uint32_t x0 = x0p & k_wt_sine_mask;
+20000294:	f006 007f 	and.w	r0, r6, #127	; 0x7f
+20000298:	ee09 6a10 	vmov	s18, r6
+    const uint32_t x1 = (x0 + 1) & k_wt_sine_mask;
+    
+    const float y0 = linintf(x0f - x0p, wt_sine_lut_f[x0], wt_sine_lut_f[x1]);
+2000029c:	eb05 0780 	add.w	r7, r5, r0, lsl #2
+200002a0:	3001      	adds	r0, #1
+200002a2:	eeb8 9a49 	vcvt.f32.u32	s18, s18
+200002a6:	f000 007f 	and.w	r0, r0, #127	; 0x7f
+200002aa:	eb05 0080 	add.w	r0, r5, r0, lsl #2
+200002ae:	edd7 7a00 	vldr	s15, [r7]
+200002b2:	ee37 7a49 	vsub.f32	s14, s14, s18
+200002b6:	ed90 9a00 	vldr	s18, [r0]
+200002ba:	ee39 9a67 	vsub.f32	s18, s18, s15
+    return (x0p < k_wt_sine_size)?y0:-y0;
+200002be:	2e7f      	cmp	r6, #127	; 0x7f
+200002c0:	eee7 7a09 	vfma.f32	s15, s14, s18
+200002c4:	bf88      	it	hi
+200002c6:	eef1 7a67 	vneghi.f32	s15, s15
+
+        const float sig = osc_softclipf(0.05f,drive * osc_sinf(p));
+200002ca:	ee60 7aa7 	vmul.f32	s15, s1, s15
+
+/** FSEL construct
+ */
+static inline __attribute__((optimize("Ofast"),always_inline))
+float fsel(const float a, const float b, const float c) {
+  return (a >= 0) ? b : c;
+200002ce:	eef4 7ae8 	vcmpe.f32	s15, s17
+200002d2:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200002d6:	db07      	blt.n	200002e8 <_hook_cycle+0x22c>
+200002d8:	eef4 7ae4 	vcmpe.f32	s15, s9
+200002dc:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200002e0:	bfa8      	it	ge
+200002e2:	eef0 7a64 	vmovge.f32	s15, s9
+200002e6:	e001      	b.n	200002ec <_hook_cycle+0x230>
+200002e8:	eeff 7a00 	vmov.f32	s15, #240	; 0xbf800000 -1.0
+        *(y++) = f32_to_q31(sig);
+200002ec:	ee27 7aa7 	vmul.f32	s14, s15, s15
+
+        phase += w0;
+200002f0:	ee36 6a26 	vadd.f32	s12, s12, s13
+        // Phase distortion
+        float p = phase + linintf(dist, 0.f, dist * osc_sinf(phase));
+        p = (p <= 0) ? 1.f - p : p - (uint32_t)p;
+
+        const float sig = osc_softclipf(0.05f,drive * osc_sinf(p));
+        *(y++) = f32_to_q31(sig);
+200002f4:	ee27 7ac7 	vnmul.f32	s14, s15, s14
+        phase += w0;
+        phase -= (uint32_t)phase;
+        hold_time += k_samplerate_recipf * (20.0f - (pitch_decay*20.0f));
+        hold_time = clip1f(hold_time);
+
+        lfoz += lfo_inc;
+200002f8:	ee35 5a22 	vadd.f32	s10, s10, s5
+        // Phase distortion
+        float p = phase + linintf(dist, 0.f, dist * osc_sinf(phase));
+        p = (p <= 0) ? 1.f - p : p - (uint32_t)p;
+
+        const float sig = osc_softclipf(0.05f,drive * osc_sinf(p));
+        *(y++) = f32_to_q31(sig);
+200002fc:	eee7 7a01 	vfma.f32	s15, s14, s2
+20000300:	ee67 7aa1 	vmul.f32	s15, s15, s3
+20000304:	eefd 7ae7 	vcvt.s32.f32	s15, s15
+20000308:	ece1 7a01 	vstmia	r1!, {s15}
+
+        phase += w0;
+        phase -= (uint32_t)phase;
+2000030c:	eefc 7ac6 	vcvt.u32.f32	s15, s12
+20000310:	eef8 7a67 	vcvt.f32.u32	s15, s15
+20000314:	ee36 6a67 	vsub.f32	s12, s12, s15
+        hold_time += k_samplerate_recipf * (20.0f - (pitch_decay*20.0f));
+20000318:	eef3 7a04 	vmov.f32	s15, #52	; 0x41a00000  20.0
+2000031c:	eee2 7a67 	vfms.f32	s15, s4, s15
+20000320:	eee7 5a84 	vfma.f32	s11, s15, s8
+20000324:	eef4 5a64 	vcmp.f32	s11, s9
+20000328:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+2000032c:	bfa8      	it	ge
+2000032e:	eef0 5a64 	vmovge.f32	s11, s9
+    float lfoz = (flags & k_flag_reset) ? lfo : s_state.lfoz;
+    const float lfo_inc = (lfo - lfoz) / frames;
+
+    q31_t * __restrict y = (q31_t *)yn; // pointer to current buffer position
+    const q31_t * y_e = y + frames; // pointer to end of buffer
+    for (; y != y_e; ) { // Time to fill the buffer!
+20000332:	e762      	b.n	200001fa <_hook_cycle+0x13e>
+        lfoz += lfo_inc;
+    }
+    s_state.hold_time = hold_time;
+    s_state.phase = phase;
+    s_state.lfoz = lfoz;
+}
+20000334:	ecbd 8b04 	vpop	{d8-d9}
+        hold_time += k_samplerate_recipf * (20.0f - (pitch_decay*20.0f));
+        hold_time = clip1f(hold_time);
+
+        lfoz += lfo_inc;
+    }
+    s_state.hold_time = hold_time;
+20000338:	edc3 5a04 	vstr	s11, [r3, #16]
+    s_state.phase = phase;
+2000033c:	ed83 6a05 	vstr	s12, [r3, #20]
+    s_state.lfoz = lfoz;
+20000340:	ed83 5a0a 	vstr	s10, [r3, #40]	; 0x28
+}
+20000344:	bdf0      	pop	{r4, r5, r6, r7, pc}
+20000346:	bf00      	nop
+20000348:	200003f8 	.word	0x200003f8
+2000034c:	0800f100 	.word	0x0800f100
+20000350:	3b808081 	.word	0x3b808081
+20000354:	37aec33e 	.word	0x37aec33e
+20000358:	46b8ff49 	.word	0x46b8ff49
+2000035c:	00000000 	.word	0x00000000
+20000360:	43800000 	.word	0x43800000
+20000364:	08012bdc 	.word	0x08012bdc
+20000368:	3d4ccccd 	.word	0x3d4ccccd
+2000036c:	4f000000 	.word	0x4f000000
+
+20000370 <_hook_on>:
+
+void OSC_NOTEON(const user_osc_param_t * const params) {
+    //Reset the flag
+    s_state.flags |= k_flag_reset;
+20000370:	4b04      	ldr	r3, [pc, #16]	; (20000384 <_hook_on+0x14>)
+20000372:	f893 202c 	ldrb.w	r2, [r3, #44]	; 0x2c
+20000376:	f042 0201 	orr.w	r2, r2, #1
+2000037a:	f883 202c 	strb.w	r2, [r3, #44]	; 0x2c
+    s_state.hold_time = 0.f;
+2000037e:	2200      	movs	r2, #0
+20000380:	611a      	str	r2, [r3, #16]
+20000382:	4770      	bx	lr
+20000384:	200003f8 	.word	0x200003f8
+
+20000388 <_hook_off>:
+}
+
+void OSC_NOTEOFF(const user_osc_param_t * const params) {
+20000388:	4770      	bx	lr
+
+2000038a <_hook_param>:
+    (void)params;
+}
+
+void OSC_PARAM(uint16_t index, uint16_t value) {
+    const float valf = param_val_to_f32(value);
+2000038a:	ee07 1a90 	vmov	s15, r1
+2000038e:	ed9f 7a16 	vldr	s14, [pc, #88]	; 200003e8 <_hook_param+0x5e>
+20000392:	eef8 7ae7 	vcvt.f32.s32	s15, s15
+20000396:	ee67 7a87 	vmul.f32	s15, s15, s14
+
+    switch (index) {
+2000039a:	2807      	cmp	r0, #7
+2000039c:	d822      	bhi.n	200003e4 <_hook_param+0x5a>
+2000039e:	e8df f000 	tbb	[pc, r0]
+200003a2:	0c04      	.short	0x0c04
+200003a4:	21212121 	.word	0x21212121
+200003a8:	1a16      	.short	0x1a16
+        case k_user_osc_param_id1:
+            s_state.drive = 1.f + valf;
+200003aa:	eeb7 7a00 	vmov.f32	s14, #112	; 0x3f800000  1.0
+200003ae:	ee77 7a87 	vadd.f32	s15, s15, s14
+200003b2:	4b0e      	ldr	r3, [pc, #56]	; (200003ec <_hook_param+0x62>)
+200003b4:	edc3 7a07 	vstr	s15, [r3, #28]
+            break;
+200003b8:	4770      	bx	lr
+        case k_user_osc_param_id2:
+            s_state.attack_pitch = 1.f + (valf * 24.f);
+200003ba:	eeb7 7a00 	vmov.f32	s14, #112	; 0x3f800000  1.0
+200003be:	eef3 6a08 	vmov.f32	s13, #56	; 0x41c00000  24.0
+200003c2:	eea7 7aa6 	vfma.f32	s14, s15, s13
+200003c6:	4b09      	ldr	r3, [pc, #36]	; (200003ec <_hook_param+0x62>)
+200003c8:	ed83 7a08 	vstr	s14, [r3, #32]
+            break;
+200003cc:	4770      	bx	lr
+        case k_user_osc_param_id4:
+        case k_user_osc_param_id5:
+        case k_user_osc_param_id6:
+            break;
+        case k_user_osc_param_shape:
+            s_state.pitch_decay = valf;
+200003ce:	4b07      	ldr	r3, [pc, #28]	; (200003ec <_hook_param+0x62>)
+200003d0:	edc3 7a03 	vstr	s15, [r3, #12]
+            break;
+200003d4:	4770      	bx	lr
+        case k_user_osc_param_shiftshape:
+            s_state.dist = 0.7f * valf;
+200003d6:	ed9f 7a06 	vldr	s14, [pc, #24]	; 200003f0 <_hook_param+0x66>
+200003da:	4b04      	ldr	r3, [pc, #16]	; (200003ec <_hook_param+0x62>)
+200003dc:	ee67 7a87 	vmul.f32	s15, s15, s14
+200003e0:	edc3 7a06 	vstr	s15, [r3, #24]
+200003e4:	4770      	bx	lr
+200003e6:	bf00      	nop
+200003e8:	3a802008 	.word	0x3a802008
+200003ec:	200003f8 	.word	0x200003f8
+200003f0:	3f333333 	.word	0x3f333333

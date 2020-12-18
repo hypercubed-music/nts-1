@@ -1,0 +1,464 @@
+
+build/distort-mod.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+20017840 <_text_start>:
+20017840:	4770      	bx	lr
+
+20017842 <_hook_resume>:
+20017842:	4770      	bx	lr
+20017844:	4770      	bx	lr
+
+20017846 <_hook_suspend>:
+20017846:	4770      	bx	lr
+20017848:	4770      	bx	lr
+
+2001784a <_entry>:
+2001784a:	4b10      	ldr	r3, [pc, #64]	; (2001788c <_entry+0x42>)
+2001784c:	4a10      	ldr	r2, [pc, #64]	; (20017890 <_entry+0x46>)
+2001784e:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
+20017852:	4688      	mov	r8, r1
+20017854:	4607      	mov	r7, r0
+20017856:	2100      	movs	r1, #0
+20017858:	4293      	cmp	r3, r2
+2001785a:	d002      	beq.n	20017862 <_entry+0x18>
+2001785c:	f803 1f01 	strb.w	r1, [r3, #1]!
+20017860:	e7fa      	b.n	20017858 <_entry+0xe>
+20017862:	4b0c      	ldr	r3, [pc, #48]	; (20017894 <_entry+0x4a>)
+20017864:	4c0c      	ldr	r4, [pc, #48]	; (20017898 <_entry+0x4e>)
+20017866:	1ae4      	subs	r4, r4, r3
+20017868:	10a4      	asrs	r4, r4, #2
+2001786a:	2500      	movs	r5, #0
+2001786c:	461e      	mov	r6, r3
+2001786e:	42a5      	cmp	r5, r4
+20017870:	d005      	beq.n	2001787e <_entry+0x34>
+20017872:	f856 3025 	ldr.w	r3, [r6, r5, lsl #2]
+20017876:	b103      	cbz	r3, 2001787a <_entry+0x30>
+20017878:	4798      	blx	r3
+2001787a:	3501      	adds	r5, #1
+2001787c:	e7f7      	b.n	2001786e <_entry+0x24>
+2001787e:	4641      	mov	r1, r8
+20017880:	4638      	mov	r0, r7
+20017882:	f000 f80b 	bl	2001789c <_hook_init>
+20017886:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
+2001788a:	bf00      	nop
+2001788c:	20017b67 	.word	0x20017b67
+20017890:	20017b77 	.word	0x20017b77
+20017894:	20017840 	.word	0x20017840
+20017898:	20017840 	.word	0x20017840
+
+2001789c <_hook_init>:
+    return out;
+}
+
+void MODFX_INIT(uint32_t platform, uint32_t api)
+{
+    dist_depth = 1.f;
+2001789c:	4b03      	ldr	r3, [pc, #12]	; (200178ac <_hook_init+0x10>)
+2001789e:	f04f 527e 	mov.w	r2, #1065353216	; 0x3f800000
+200178a2:	601a      	str	r2, [r3, #0]
+    dist_type = 01.f;
+200178a4:	2201      	movs	r2, #1
+200178a6:	605a      	str	r2, [r3, #4]
+200178a8:	4770      	bx	lr
+200178aa:	bf00      	nop
+200178ac:	20017b68 	.word	0x20017b68
+
+200178b0 <_hook_process>:
+}
+
+void MODFX_PROCESS(const float *main_xn, float *main_yn,
+                   const float *sub_xn,  float *sub_yn,
+                   uint32_t frames)
+{
+200178b0:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
+200178b4:	460c      	mov	r4, r1
+200178b6:	461d      	mov	r5, r3
+200178b8:	4607      	mov	r7, r0
+200178ba:	4690      	mov	r8, r2
+   * @return  Current floating point BPM
+   */
+  float _fx_get_bpmf(void);
+
+  __fast_inline float fx_get_bpmf(void) {
+    return _fx_get_bpmf();
+200178bc:	f000 f94e 	bl	20017b5c <___fx_get_bpmf_veneer>
+    const float tempo = fx_get_bpmf();
+    const float * mx = main_xn;
+    float * __restrict my = main_yn;
+    const float * my_e = my + 2*frames;
+200178c0:	9b06      	ldr	r3, [sp, #24]
+    return out;
+}
+
+float __fast_inline fold(float x, float lim) {
+    float out = x;
+    while (out > lim || out < -lim) {
+200178c2:	eddf 6a8c 	vldr	s13, [pc, #560]	; 20017af4 <_hook_process+0x244>
+200178c6:	eddf 5a8c 	vldr	s11, [pc, #560]	; 20017af8 <_hook_process+0x248>
+                   uint32_t frames)
+{
+    const float tempo = fx_get_bpmf();
+    const float * mx = main_xn;
+    float * __restrict my = main_yn;
+    const float * my_e = my + 2*frames;
+200178ca:	eb04 01c3 	add.w	r1, r4, r3, lsl #3
+    float base_main;
+    float base_sub;
+    for (; my < my_e;) {
+        base_main = *(mx++) * ((dist_depth * 10.0f) + 1.f);
+        base_sub = *(sx++) * ((dist_depth * 10.0f) + 1.f);
+        switch(dist_type) {
+200178ce:	4b8b      	ldr	r3, [pc, #556]	; (20017afc <_hook_process+0x24c>)
+200178d0:	685e      	ldr	r6, [r3, #4]
+    const float *sx = sub_xn;
+    float * __restrict sy = sub_yn;
+    float base_main;
+    float base_sub;
+    for (; my < my_e;) {
+        base_main = *(mx++) * ((dist_depth * 10.0f) + 1.f);
+200178d2:	eef2 3a04 	vmov.f32	s7, #36	; 0x41200000  10.0
+200178d6:	eeb7 3a00 	vmov.f32	s6, #112	; 0x3f800000  1.0
+200178da:	eeb0 6a66 	vmov.f32	s12, s13
+200178de:	eeb0 5a66 	vmov.f32	s10, s13
+200178e2:	eef0 4a65 	vmov.f32	s9, s11
+
+    const float *sx = sub_xn;
+    float * __restrict sy = sub_yn;
+    float base_main;
+    float base_sub;
+    for (; my < my_e;) {
+200178e6:	428c      	cmp	r4, r1
+200178e8:	f080 8101 	bcs.w	20017aee <_hook_process+0x23e>
+        base_main = *(mx++) * ((dist_depth * 10.0f) + 1.f);
+200178ec:	edd3 7a00 	vldr	s15, [r3]
+        base_sub = *(sx++) * ((dist_depth * 10.0f) + 1.f);
+200178f0:	ecb8 4a01 	vldmia	r8!, {s8}
+    const float *sx = sub_xn;
+    float * __restrict sy = sub_yn;
+    float base_main;
+    float base_sub;
+    for (; my < my_e;) {
+        base_main = *(mx++) * ((dist_depth * 10.0f) + 1.f);
+200178f4:	eeb0 7a43 	vmov.f32	s14, s6
+200178f8:	eea7 7aa3 	vfma.f32	s14, s15, s7
+200178fc:	eef0 7a47 	vmov.f32	s15, s14
+20017900:	ecb7 7a01 	vldmia	r7!, {s14}
+20017904:	ee27 7a87 	vmul.f32	s14, s15, s14
+        base_sub = *(sx++) * ((dist_depth * 10.0f) + 1.f);
+20017908:	ee67 7a84 	vmul.f32	s15, s15, s8
+        switch(dist_type) {
+2001790c:	2e03      	cmp	r6, #3
+2001790e:	d8ea      	bhi.n	200178e6 <_hook_process+0x36>
+20017910:	e8df f006 	tbb	[pc, r6]
+20017914:	a4643902 	.word	0xa4643902
+
+/** FSEL construct
+ */
+static inline __attribute__((optimize("Ofast"),always_inline))
+float fsel(const float a, const float b, const float c) {
+  return (a >= 0) ? b : c;
+20017918:	ee37 4a26 	vadd.f32	s8, s14, s13
+            case 0:
+                *(my++) = softclip(base_main, 0.15f, 0.15f);
+                *(sy++) = softclip(base_sub, 0.15f, 0.15f);
+2001791c:	3504      	adds	r5, #4
+2001791e:	eeb5 4ac0 	vcmpe.f32	s8, #0.0
+20017922:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017926:	bfb8      	it	lt
+20017928:	eeb0 7a65 	vmovlt.f32	s14, s11
+2001792c:	ee37 4a46 	vsub.f32	s8, s14, s12
+    for (; my < my_e;) {
+        base_main = *(mx++) * ((dist_depth * 10.0f) + 1.f);
+        base_sub = *(sx++) * ((dist_depth * 10.0f) + 1.f);
+        switch(dist_type) {
+            case 0:
+                *(my++) = softclip(base_main, 0.15f, 0.15f);
+20017930:	3404      	adds	r4, #4
+20017932:	eeb5 4a40 	vcmp.f32	s8, #0.0
+20017936:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+2001793a:	bfa8      	it	ge
+2001793c:	eeb0 7a66 	vmovge.f32	s14, s13
+20017940:	ee27 4a07 	vmul.f32	s8, s14, s14
+20017944:	ee27 4a44 	vnmul.f32	s8, s14, s8
+20017948:	eea4 7a06 	vfma.f32	s14, s8, s12
+2001794c:	ed04 7a01 	vstr	s14, [r4, #-4]
+20017950:	ee37 7a86 	vadd.f32	s14, s15, s12
+20017954:	eeb5 7ac0 	vcmpe.f32	s14, #0.0
+20017958:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+2001795c:	bfb8      	it	lt
+2001795e:	eef0 7a65 	vmovlt.f32	s15, s11
+20017962:	ee37 7ac6 	vsub.f32	s14, s15, s12
+20017966:	eeb5 7a40 	vcmp.f32	s14, #0.0
+2001796a:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+2001796e:	bfa8      	it	ge
+20017970:	eef0 7a66 	vmovge.f32	s15, s13
+                *(sy++) = softclip(base_sub, 0.15f, 0.15f);
+20017974:	ee27 7aa7 	vmul.f32	s14, s15, s15
+20017978:	ee27 7ac7 	vnmul.f32	s14, s15, s14
+2001797c:	eee7 7a06 	vfma.f32	s15, s14, s12
+20017980:	ed45 7a01 	vstr	s15, [r5, #-4]
+                break;
+20017984:	e7af      	b.n	200178e6 <_hook_process+0x36>
+20017986:	ee37 4a26 	vadd.f32	s8, s14, s13
+            case 1:
+                *(my++) = hardclip(base_main, 0.15f);
+                *(sy++) = hardclip(base_sub, 0.15f);
+2001798a:	3504      	adds	r5, #4
+2001798c:	eeb5 4ac0 	vcmpe.f32	s8, #0.0
+20017990:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017994:	bfb8      	it	lt
+20017996:	eeb0 7a65 	vmovlt.f32	s14, s11
+2001799a:	ee37 4a46 	vsub.f32	s8, s14, s12
+            case 0:
+                *(my++) = softclip(base_main, 0.15f, 0.15f);
+                *(sy++) = softclip(base_sub, 0.15f, 0.15f);
+                break;
+            case 1:
+                *(my++) = hardclip(base_main, 0.15f);
+2001799e:	3404      	adds	r4, #4
+200179a0:	eeb5 4a40 	vcmp.f32	s8, #0.0
+200179a4:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200179a8:	bfa8      	it	ge
+200179aa:	eeb0 7a66 	vmovge.f32	s14, s13
+200179ae:	ed04 7a01 	vstr	s14, [r4, #-4]
+200179b2:	ee37 7a86 	vadd.f32	s14, s15, s12
+200179b6:	eeb5 7ac0 	vcmpe.f32	s14, #0.0
+200179ba:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200179be:	bfb8      	it	lt
+200179c0:	eef0 7a65 	vmovlt.f32	s15, s11
+200179c4:	ee37 7ac6 	vsub.f32	s14, s15, s12
+200179c8:	eeb5 7a40 	vcmp.f32	s14, #0.0
+200179cc:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200179d0:	bfa8      	it	ge
+200179d2:	eef0 7a66 	vmovge.f32	s15, s13
+                *(sy++) = hardclip(base_sub, 0.15f);
+200179d6:	ed45 7a01 	vstr	s15, [r5, #-4]
+                break;
+200179da:	e784      	b.n	200178e6 <_hook_process+0x36>
+            case 2:
+                *(my++) = wrap(base_main, 0.15f);
+200179dc:	1d22      	adds	r2, r4, #4
+    return clipminmaxf(-lim, x, lim);
+}
+
+float __fast_inline wrap(float x, float lim) {
+    float out = x;
+    while (out > lim || out < -lim) {
+200179de:	eeb4 7ae6 	vcmpe.f32	s14, s13
+200179e2:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200179e6:	d804      	bhi.n	200179f2 <_hook_process+0x142>
+200179e8:	eeb4 7ae5 	vcmpe.f32	s14, s11
+200179ec:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200179f0:	da13      	bge.n	20017a1a <_hook_process+0x16a>
+        if (out > lim) {
+200179f2:	eeb4 7ac6 	vcmpe.f32	s14, s12
+200179f6:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+200179fa:	dd04      	ble.n	20017a06 <_hook_process+0x156>
+            out = -lim + (out-lim);
+200179fc:	ee37 7a66 	vsub.f32	s14, s14, s13
+20017a00:	ee37 7a66 	vsub.f32	s14, s14, s13
+20017a04:	e7eb      	b.n	200179de <_hook_process+0x12e>
+        } else if (out < -lim) {
+20017a06:	eeb4 7ae5 	vcmpe.f32	s14, s11
+20017a0a:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a0e:	d5e6      	bpl.n	200179de <_hook_process+0x12e>
+            out = lim - (-out-lim);
+20017a10:	ee37 7a26 	vadd.f32	s14, s14, s13
+20017a14:	ee37 7a26 	vadd.f32	s14, s14, s13
+20017a18:	e7e1      	b.n	200179de <_hook_process+0x12e>
+            case 1:
+                *(my++) = hardclip(base_main, 0.15f);
+                *(sy++) = hardclip(base_sub, 0.15f);
+                break;
+            case 2:
+                *(my++) = wrap(base_main, 0.15f);
+20017a1a:	ed84 7a00 	vstr	s14, [r4]
+                *(sy++) = wrap(base_sub, 0.15f);
+20017a1e:	1d28      	adds	r0, r5, #4
+    return clipminmaxf(-lim, x, lim);
+}
+
+float __fast_inline wrap(float x, float lim) {
+    float out = x;
+    while (out > lim || out < -lim) {
+20017a20:	eef4 7ac5 	vcmpe.f32	s15, s10
+20017a24:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a28:	d804      	bhi.n	20017a34 <_hook_process+0x184>
+20017a2a:	eef4 7ae4 	vcmpe.f32	s15, s9
+20017a2e:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a32:	da57      	bge.n	20017ae4 <_hook_process+0x234>
+        if (out > lim) {
+20017a34:	eef4 7ac5 	vcmpe.f32	s15, s10
+20017a38:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a3c:	dd04      	ble.n	20017a48 <_hook_process+0x198>
+            out = -lim + (out-lim);
+20017a3e:	ee77 7ae6 	vsub.f32	s15, s15, s13
+20017a42:	ee77 7ae6 	vsub.f32	s15, s15, s13
+20017a46:	e7eb      	b.n	20017a20 <_hook_process+0x170>
+        } else if (out < -lim) {
+20017a48:	eef4 7ae4 	vcmpe.f32	s15, s9
+20017a4c:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a50:	d5e6      	bpl.n	20017a20 <_hook_process+0x170>
+            out = lim - (-out-lim);
+20017a52:	ee77 7aa6 	vadd.f32	s15, s15, s13
+20017a56:	ee77 7aa6 	vadd.f32	s15, s15, s13
+20017a5a:	e7e1      	b.n	20017a20 <_hook_process+0x170>
+            case 2:
+                *(my++) = wrap(base_main, 0.15f);
+                *(sy++) = wrap(base_sub, 0.15f);
+                break;
+            case 3:
+                *(my++) = fold(base_main, 0.15f);
+20017a5c:	1d22      	adds	r2, r4, #4
+    return out;
+}
+
+float __fast_inline fold(float x, float lim) {
+    float out = x;
+    while (out > lim || out < -lim) {
+20017a5e:	eeb4 7ae6 	vcmpe.f32	s14, s13
+20017a62:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a66:	d804      	bhi.n	20017a72 <_hook_process+0x1c2>
+20017a68:	eeb4 7ae5 	vcmpe.f32	s14, s11
+20017a6c:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a70:	da15      	bge.n	20017a9e <_hook_process+0x1ee>
+        if (out > lim) {
+20017a72:	eeb4 7ac6 	vcmpe.f32	s14, s12
+20017a76:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a7a:	dd04      	ble.n	20017a86 <_hook_process+0x1d6>
+            out = lim - (out - lim);
+20017a7c:	ee36 7ac7 	vsub.f32	s14, s13, s14
+20017a80:	ee37 7a26 	vadd.f32	s14, s14, s13
+20017a84:	e7eb      	b.n	20017a5e <_hook_process+0x1ae>
+        } else if (out < -lim) {
+20017a86:	eeb4 7ae5 	vcmpe.f32	s14, s11
+20017a8a:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017a8e:	d5e6      	bpl.n	20017a5e <_hook_process+0x1ae>
+            out = -lim + (-out-lim);
+20017a90:	eeb1 7a47 	vneg.f32	s14, s14
+20017a94:	ee37 7a66 	vsub.f32	s14, s14, s13
+20017a98:	ee37 7a66 	vsub.f32	s14, s14, s13
+20017a9c:	e7df      	b.n	20017a5e <_hook_process+0x1ae>
+            case 2:
+                *(my++) = wrap(base_main, 0.15f);
+                *(sy++) = wrap(base_sub, 0.15f);
+                break;
+            case 3:
+                *(my++) = fold(base_main, 0.15f);
+20017a9e:	ed84 7a00 	vstr	s14, [r4]
+                *(sy++) = fold(base_sub, 0.15f);
+20017aa2:	1d28      	adds	r0, r5, #4
+    return out;
+}
+
+float __fast_inline fold(float x, float lim) {
+    float out = x;
+    while (out > lim || out < -lim) {
+20017aa4:	eef4 7ac5 	vcmpe.f32	s15, s10
+20017aa8:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017aac:	d804      	bhi.n	20017ab8 <_hook_process+0x208>
+20017aae:	eef4 7ae4 	vcmpe.f32	s15, s9
+20017ab2:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017ab6:	da15      	bge.n	20017ae4 <_hook_process+0x234>
+        if (out > lim) {
+20017ab8:	eef4 7ac5 	vcmpe.f32	s15, s10
+20017abc:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017ac0:	dd04      	ble.n	20017acc <_hook_process+0x21c>
+            out = lim - (out - lim);
+20017ac2:	ee76 7ae7 	vsub.f32	s15, s13, s15
+20017ac6:	ee77 7aa6 	vadd.f32	s15, s15, s13
+20017aca:	e7eb      	b.n	20017aa4 <_hook_process+0x1f4>
+        } else if (out < -lim) {
+20017acc:	eef4 7ae4 	vcmpe.f32	s15, s9
+20017ad0:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017ad4:	d5e6      	bpl.n	20017aa4 <_hook_process+0x1f4>
+            out = -lim + (-out-lim);
+20017ad6:	eef1 7a67 	vneg.f32	s15, s15
+20017ada:	ee77 7ae6 	vsub.f32	s15, s15, s13
+20017ade:	ee77 7ae6 	vsub.f32	s15, s15, s13
+20017ae2:	e7df      	b.n	20017aa4 <_hook_process+0x1f4>
+                *(my++) = wrap(base_main, 0.15f);
+                *(sy++) = wrap(base_sub, 0.15f);
+                break;
+            case 3:
+                *(my++) = fold(base_main, 0.15f);
+                *(sy++) = fold(base_sub, 0.15f);
+20017ae4:	edc5 7a00 	vstr	s15, [r5]
+            case 2:
+                *(my++) = wrap(base_main, 0.15f);
+                *(sy++) = wrap(base_sub, 0.15f);
+                break;
+            case 3:
+                *(my++) = fold(base_main, 0.15f);
+20017ae8:	4614      	mov	r4, r2
+                *(sy++) = fold(base_sub, 0.15f);
+20017aea:	4605      	mov	r5, r0
+                break;
+20017aec:	e6fb      	b.n	200178e6 <_hook_process+0x36>
+20017aee:	e8bd 81f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, pc}
+20017af2:	bf00      	nop
+20017af4:	3e19999a 	.word	0x3e19999a
+20017af8:	be19999a 	.word	0xbe19999a
+20017afc:	20017b68 	.word	0x20017b68
+
+20017b00 <_hook_param>:
+    }
+}
+
+void MODFX_PARAM(uint8_t index, int32_t value)
+    {
+        const float valf = q31_to_f32(value);
+20017b00:	ee07 1a90 	vmov	s15, r1
+20017b04:	eefa 7ae0 	vcvt.f32.s32	s15, s15, #31
+        switch (index) {
+20017b08:	b110      	cbz	r0, 20017b10 <_hook_param+0x10>
+20017b0a:	2801      	cmp	r0, #1
+20017b0c:	d01f      	beq.n	20017b4e <_hook_param+0x4e>
+20017b0e:	4770      	bx	lr
+            case k_user_modfx_param_time:
+                if (valf < 0.25) {
+20017b10:	eeb5 7a00 	vmov.f32	s14, #80	; 0x3e800000  0.250
+20017b14:	eef4 7ac7 	vcmpe.f32	s15, s14
+20017b18:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017b1c:	4b0e      	ldr	r3, [pc, #56]	; (20017b58 <_hook_param+0x58>)
+20017b1e:	d501      	bpl.n	20017b24 <_hook_param+0x24>
+                    dist_type = 0; //Soft
+20017b20:	6058      	str	r0, [r3, #4]
+20017b22:	4770      	bx	lr
+                } else if (valf < 0.5) {
+20017b24:	eeb6 7a00 	vmov.f32	s14, #96	; 0x3f000000  0.5
+20017b28:	eef4 7ac7 	vcmpe.f32	s15, s14
+20017b2c:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+20017b30:	d502      	bpl.n	20017b38 <_hook_param+0x38>
+                    dist_type = 1; //Hard
+20017b32:	2201      	movs	r2, #1
+20017b34:	605a      	str	r2, [r3, #4]
+20017b36:	4770      	bx	lr
+                } else if (valf < 0.75) {
+20017b38:	eeb6 7a08 	vmov.f32	s14, #104	; 0x3f400000  0.750
+20017b3c:	eef4 7ac7 	vcmpe.f32	s15, s14
+20017b40:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
+                    dist_type = 2; //Wrap
+20017b44:	bf4c      	ite	mi
+20017b46:	2202      	movmi	r2, #2
+                } else {
+                    dist_type = 3; //..
+20017b48:	2203      	movpl	r2, #3
+20017b4a:	605a      	str	r2, [r3, #4]
+20017b4c:	4770      	bx	lr
+                }
+                break;
+            case k_user_modfx_param_depth:
+                dist_depth = valf;
+20017b4e:	4b02      	ldr	r3, [pc, #8]	; (20017b58 <_hook_param+0x58>)
+20017b50:	edc3 7a00 	vstr	s15, [r3]
+20017b54:	4770      	bx	lr
+20017b56:	bf00      	nop
+20017b58:	20017b68 	.word	0x20017b68
+
+20017b5c <___fx_get_bpmf_veneer>:
+20017b5c:	f85f f000 	ldr.w	pc, [pc]	; 20017b60 <___fx_get_bpmf_veneer+0x4>
+20017b60:	0807ca8d 	.word	0x0807ca8d

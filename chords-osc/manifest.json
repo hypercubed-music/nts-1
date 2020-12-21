@@ -1,0 +1,17 @@
+{
+    "header" : 
+    {
+        "platform" : "nutekt-digital",
+        "module" : "osc",
+        "api" : "1.1-0",
+        "dev_id" : 0,
+        "prg_id" : 0,
+        "version" : "0.1-0",
+        "name" : "chords",
+        "num_param" : 2,
+        "params" : [
+            ["wave", 0, 100, ""],
+            ["detune", 0, 100, ""]
+        ]
+    }
+}

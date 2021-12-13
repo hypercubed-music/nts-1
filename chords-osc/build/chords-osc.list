@@ -5,110 +5,42 @@ build/chords-osc.elf:     file format elf32-littlearm
 Disassembly of section .text:
 
 20000040 <_text_start>:
-  (void)api;
-}
-
-__attribute__((weak))
-void _hook_cycle(const user_osc_param_t * const params, int32_t *yn, const uint32_t frames)
-{
 20000040:	4770      	bx	lr
 
 20000042 <_hook_mute>:
-  (void)params;
-}
-
-__attribute__((weak))
-void _hook_mute(const user_osc_param_t * const params)
-{
 20000042:	4770      	bx	lr
 
 20000044 <_hook_value>:
-  (void)params;
-}
-
-__attribute__((weak))
-void _hook_value(uint16_t value)
-{
 20000044:	4770      	bx	lr
-  (void)value;
-}
-
-__attribute__((weak))
-void _hook_param(uint16_t index, uint16_t value)
-{
 20000046:	4770      	bx	lr
 20000048:	4770      	bx	lr
 2000004a:	4770      	bx	lr
-  _hook_init(platform, api);
-}
-
-__attribute__((weak))
-void _hook_init(uint32_t platform, uint32_t api)
-{
 2000004c:	4770      	bx	lr
 
 2000004e <_entry>:
- * @{
- */
-
-__attribute__((used))
-void _entry(uint32_t platform, uint32_t api)
-{
 2000004e:	4b10      	ldr	r3, [pc, #64]	; (20000090 <_entry+0x42>)
 20000050:	4a10      	ldr	r2, [pc, #64]	; (20000094 <_entry+0x46>)
 20000052:	e92d 41f0 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
 20000056:	4688      	mov	r8, r1
 20000058:	4607      	mov	r7, r0
-  // Ensure zero-clear BSS segment
-  uint8_t * __restrict bss_p = (uint8_t *)&_bss_start;
-  const uint8_t * const bss_e = (uint8_t *)&_bss_end;
-
-  for (; bss_p != bss_e;)
-    *(bss_p++) = 0;
 2000005a:	2100      	movs	r1, #0
-{
-  // Ensure zero-clear BSS segment
-  uint8_t * __restrict bss_p = (uint8_t *)&_bss_start;
-  const uint8_t * const bss_e = (uint8_t *)&_bss_end;
-
-  for (; bss_p != bss_e;)
 2000005c:	4293      	cmp	r3, r2
 2000005e:	d002      	beq.n	20000066 <_entry+0x18>
-    *(bss_p++) = 0;
 20000060:	f803 1f01 	strb.w	r1, [r3, #1]!
 20000064:	e7fa      	b.n	2000005c <_entry+0xe>
 20000066:	4b0c      	ldr	r3, [pc, #48]	; (20000098 <_entry+0x4a>)
 20000068:	4c0c      	ldr	r4, [pc, #48]	; (2000009c <_entry+0x4e>)
 2000006a:	1ae4      	subs	r4, r4, r3
 2000006c:	10a4      	asrs	r4, r4, #2
-
-  // Call constructors if any.  
-  const size_t count = __init_array_end - __init_array_start;
-  for (size_t i = 0; i<count; ++i) {
 2000006e:	2500      	movs	r5, #0
 20000070:	461e      	mov	r6, r3
 20000072:	42a5      	cmp	r5, r4
 20000074:	d005      	beq.n	20000082 <_entry+0x34>
-    __init_fptr init_p = (__init_fptr)__init_array_start[i];
 20000076:	f856 3025 	ldr.w	r3, [r6, r5, lsl #2]
-    if (init_p != NULL)
 2000007a:	b103      	cbz	r3, 2000007e <_entry+0x30>
-      init_p();
 2000007c:	4798      	blx	r3
-  for (; bss_p != bss_e;)
-    *(bss_p++) = 0;
-
-  // Call constructors if any.  
-  const size_t count = __init_array_end - __init_array_start;
-  for (size_t i = 0; i<count; ++i) {
 2000007e:	3501      	adds	r5, #1
 20000080:	e7f7      	b.n	20000072 <_entry+0x24>
-    if (init_p != NULL)
-      init_p();
-  }
-  
-  // Call user initialization
-  _hook_init(platform, api);
 20000082:	4641      	mov	r1, r8
 20000084:	4638      	mov	r0, r7
 20000086:	f000 f80b 	bl	200000a0 <_hook_init>
@@ -5488,7 +5420,7 @@ void OSC_PARAM(uint16_t index, uint16_t value)
             break;
 20001dcc:	4770      	bx	lr
         case k_user_osc_param_id2: //Detune
-            s_state.detune = 255.f * valf;
+            s_state.detune = 1023.f * valf;
 20001dce:	ed9f 7a12 	vldr	s14, [pc, #72]	; 20001e18 <_hook_param+0x88>
 20001dd2:	4b10      	ldr	r3, [pc, #64]	; (20001e14 <_hook_param+0x84>)
 20001dd4:	ee67 7a87 	vmul.f32	s15, s15, s14
@@ -5522,4 +5454,4 @@ void OSC_PARAM(uint16_t index, uint16_t value)
 20001e0c:	3a802008 	.word	0x3a802008
 20001e10:	42c80000 	.word	0x42c80000
 20001e14:	20001ee0 	.word	0x20001ee0
-20001e18:	437f0000 	.word	0x437f0000
+20001e18:	447fc000 	.word	0x447fc000

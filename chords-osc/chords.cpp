@@ -64,7 +64,7 @@ const int extensions[12][4] = {
     {0, 7, 4, 10}, // V
     {-1, 6, 4, 9}, // V
     {0, 7, 3, 10}, // vi
-    {-1, 6, 5, 9}, // vi
+    {-1, 6, 4, 9}, // vi
     {0, 6, 3, 10} // vii^0
 };
 
@@ -258,7 +258,7 @@ void OSC_PARAM(uint16_t index, uint16_t value)
             s_state.wave_type = (uint8_t)(value / 100.f * 3.f);
             break;
         case k_user_osc_param_id2: //Detune
-            s_state.detune = 255.f * valf;
+            s_state.detune = 1023.f * valf;
             break;
         case k_user_osc_param_id3: //Attenuation
             break;

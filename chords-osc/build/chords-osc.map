@@ -148,11 +148,11 @@ LOAD ./ld/osc_api.syms
                 0x0801ec98                _osc_bl_par_idx = 0x801ec98
                 0x0801ed80                _osc_rand = 0x801ed80
                 0x0801edb8                _osc_white = 0x801edb8
-LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu\libm.a
+LOAD /home/joshua/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libm.a
 START GROUP
-LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu\libgcc.a
-LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu\libg.a
-LOAD c:/msys64/home/joshu/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu\libc.a
+LOAD /home/joshua/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7e-m/fpu/libgcc.a
+LOAD /home/joshua/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libg.a
+LOAD /home/joshua/logue-sdk/tools/gcc/gcc-arm-none-eabi-5_4-2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv7e-m/fpu/libc.a
 END GROUP
 OUTPUT(build/chords-osc.elf elf32-littlearm)
 
@@ -174,15 +174,15 @@ OUTPUT(build/chords-osc.elf elf32-littlearm)
  .debug_aranges
                 0x00000020       0x20 ./build/obj/chords.o
 
-.debug_line     0x00000000     0x15b0
+.debug_line     0x00000000     0x15a3
  .debug_line    0x00000000      0x20d ./build/obj/_unit.o
- .debug_line    0x0000020d     0x13a3 ./build/obj/chords.o
+ .debug_line    0x0000020d     0x1396 ./build/obj/chords.o
 
-.debug_str      0x00000000      0x900
+.debug_str      0x00000000      0x91e
  .debug_str     0x00000000      0x5be ./build/obj/_unit.o
                                 0x640 (size before relaxing)
- .debug_str     0x000005be      0x342 ./build/obj/chords.o
-                                0x61d (size before relaxing)
+ .debug_str     0x000005be      0x360 ./build/obj/chords.o
+                                0x613 (size before relaxing)
 
 .comment        0x00000000       0x6e
  .comment       0x00000000       0x6e ./build/obj/_unit.o
